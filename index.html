@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Private Research Vault</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+
+/* ========== RESET ========== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  min-height: 100%;
+  font-family: "Inter", "Segoe UI", sans-serif;
+  background: #ececec;
+  color: #1f2937;
+}
+
+/* ========== LAYOUT ========== */
+.container {
+  max-width: 1160px;
+  margin: 40px auto;
+  padding: 0 24px;
+}
+
+.card {
+  background: #fdfdfd;
+  border-radius: 18px;
+  box-shadow: 0 14px 32px rgba(0,0,0,0.15),
+              0 4px 12px rgba(0,0,0,0.08);
+  padding: 28px 32px;
+  border: 1px solid #dadada;
+}
+
+/* ========== HEADER ========== */
+header {
+  text-align: center;
+  margin-bottom: 18px;
+}
+
+header h1 {
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #222;
+}
+
+header p {
+  color: #6b7280;
+  margin-top: 6px;
+  font-size: 16px;
+}
+
+/* ========== IFRAME STYLING ========== */
+.embed-container {
+  margin-top: 22px;
+  width: 100%;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid #c4c4c4;
+  height: 78vh;
+}
+
+iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: white;
+}
+
+/* ========== FOOTER ========== */
+footer {
+  text-align: center;
+  margin-top: 18px;
+  color: #7a7a7a;
+  font-size: 13px;
+}
+
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="card">
+
+    <header>
+      <h1>🔐 Private Research Vault</h1>
+      <p>Encrypted document — enter your CryptPad password to unlock</p>
+    </header>
+
+    <div class="embed-container">
+      <iframe
+        src="https://cryptpad.fr/doc/#/2/doc/embed/8+avfg5jriPgbj3FVKEO3Qqf/">
+      </iframe>
+    </div>
+
+    <footer>
+      Powered by :contentReference[oaicite:0]{index=0} — End-to-end encrypted
+    </footer>
+
+  </div>
+</div>
+
+</body>
+</html>
