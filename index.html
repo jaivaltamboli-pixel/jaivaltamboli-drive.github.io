@@ -2,231 +2,206 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
+<title>Research Vault Docs</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Research Vault</title>
 
-<!-- Supabase -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono&family=Merriweather&display=swap" rel="stylesheet">
+
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
 <style>
-/* ===============================
-   RESET + THEME
-================================ */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-}
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
-html, body {
-  height: 100%;
-  background: radial-gradient(circle at top, #111318, #08090c);
-  color: #eaeaea;
-}
-
-/* ===============================
-   CENTER LAYOUT
-================================ */
 body {
+  font-family: Inter, system-ui;
+  background: #0b0b0c;
+  color: #eaeaea;
+  height: 100vh;
   display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
-#app {
-  width: 100%;
-  height: 100%;
-  display: grid;
-  place-items: center;
+/* Sidebar */
+aside {
+  width: 260px;
+  background: #121214;
+  border-right: 1px solid #222;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
 }
 
-/* ===============================
-   LOGIN CARD
-================================ */
-.panel {
-  width: 420px;
-  max-width: 92%;
-  padding: 42px;
-  border-radius: 22px;
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0)),
-    #0d0f14;
-  box-shadow:
-    0 0 0 1px rgba(255,255,255,0.05),
-    0 40px 90px rgba(0,0,0,0.75);
-  backdrop-filter: blur(10px);
-  animation: fadeUp 0.7s ease;
-}
-
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(18px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-/* ===============================
-   TEXT
-================================ */
-h1 {
-  font-size: 2rem;
-  font-weight: 800;
-  color: #ffcc00;
+aside h2 {
+  font-size: 1rem;
   margin-bottom: 10px;
+  color: #ffcc00;
 }
 
-p {
-  color: #aeb2c1;
-  font-size: 0.95rem;
-  margin-bottom: 28px;
-  line-height: 1.6;
+#docs {
+  flex: 1;
+  overflow-y: auto;
 }
 
-/* ===============================
-   INPUT
-================================ */
-input {
-  width: 100%;
-  padding: 15px 18px;
-  font-size: 1rem;
-  border-radius: 14px;
-  background: #07080c;
-  border: 1px solid #1f2230;
-  color: #fff;
-  outline: none;
-  transition: 0.2s ease;
-}
-
-input::placeholder {
-  color: #555;
-}
-
-input:focus {
-  border-color: #ffcc00;
-  box-shadow: 0 0 0 4px rgba(255,204,0,0.15);
-}
-
-/* ===============================
-   BUTTON
-================================ */
-button {
-  width: 100%;
-  margin-top: 22px;
-  padding: 15px;
-  border-radius: 16px;
-  border: none;
-  font-weight: 800;
-  font-size: 1rem;
-  background: linear-gradient(135deg, #ffcc00, #ffb300);
-  color: #000;
+.doc {
+  padding: 10px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  margin-bottom: 6px;
+}
+.doc:hover { background: #1a1a1d; }
+
+aside button {
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  background: #ffcc00;
+  font-weight: 700;
+  cursor: pointer;
 }
 
-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 18px 40px rgba(255,204,0,0.35);
+/* Main */
+main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
-button:active {
-  transform: translateY(0);
+.toolbar {
+  display: flex;
+  gap: 10px;
+  padding: 10px;
+  border-bottom: 1px solid #222;
+  background: #111;
 }
 
-/* ===============================
-   ERROR
-================================ */
-#error {
-  display: none;
-  margin-top: 14px;
-  color: #ff5a5a;
-  font-size: 0.9rem;
+.toolbar button, .toolbar select {
+  background: #1a1a1d;
+  border: 1px solid #333;
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
 }
 
-/* ===============================
-   VAULT VIEW
-================================ */
-#vault {
-  display: none;
-  padding: 60px;
-  animation: fadeUp 0.6s ease;
+.editor {
+  flex: 1;
+  padding: 32px;
+  outline: none;
+  overflow-y: auto;
+  font-size: 1rem;
+  line-height: 1.7;
 }
 
-#vault h1 {
-  font-size: 2.2rem;
-}
-
-#vault p {
-  max-width: 600px;
-}
+/* Fonts */
+.font-inter { font-family: Inter; }
+.font-serif { font-family: Merriweather; }
+.font-mono { font-family: "JetBrains Mono"; }
 </style>
 </head>
 
 <body>
-<div id="app">
 
-  <!-- LOGIN -->
-  <div class="panel" id="login">
-    <h1>Research Vault</h1>
-    <p>Authorized access only. All activity is monitored.</p>
+<aside>
+  <h2>Documents</h2>
+  <div id="docs"></div>
+  <button onclick="newDoc()">＋ New</button>
+</aside>
 
-    <input id="password" type="password" placeholder="Enter password" />
-    <button id="unlock">Unlock</button>
+<main>
+  <div class="toolbar">
+    <button onclick="cmd('bold')"><b>B</b></button>
+    <button onclick="cmd('italic')"><i>I</i></button>
+    <button onclick="cmd('insertUnorderedList')">• List</button>
 
-    <div id="error">Incorrect password</div>
+    <select onchange="setFont(this.value)">
+      <option value="font-inter">Inter</option>
+      <option value="font-serif">Serif</option>
+      <option value="font-mono">Mono</option>
+    </select>
+
+    <span id="status" style="margin-left:auto;color:#aaa;">Saved</span>
   </div>
 
-  <!-- VAULT -->
-  <div id="vault">
-    <h1>Vault Unlocked</h1>
-    <p>
-      Secure content successfully loaded via Supabase.
-      You can now add documents, dashboards, or research tools here.
-    </p>
-  </div>
-
-</div>
+  <div id="editor" class="editor font-inter" contenteditable="true"></div>
+</main>
 
 <script>
-/* ===============================
-   SUPABASE CLIENT
-================================ */
-const db = window.supabase.createClient(
-  "https://sheeqpvmdrksdrxwxdfs.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNoZWVxcHZtZHJrc2RyeHd4ZGZzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE3NzMyMjEsImV4cCI6MjA4NzM0OTIyMX0.SEub1Atcb68cRwbm5lAB8Iv4cs1fFyJ5moVz8pAXmVk"
-);
+/* Supabase config — already filled */
+const SUPABASE_URL = "https://sheeqpvmdrksdrxwxdfs.supabase.co";
+const SUPABASE_ANON_KEY =
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNoZWVxcHZtZHJrc2RyeHd4ZGZzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE3NzMyMjEsImV4cCI6MjA4NzM0OTIyMX0.SEub1Atcb68cRwbm5lAB8Iv4cs1fFyJ5moVz8pAXmVk";
 
-/* ===============================
-   LOGIN LOGIC
-================================ */
-const unlockBtn = document.getElementById("unlock");
-const passwordInput = document.getElementById("password");
-const errorBox = document.getElementById("error");
-const loginPanel = document.getElementById("login");
-const vault = document.getElementById("vault");
+const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-async function attemptUnlock() {
-  errorBox.style.display = "none";
-  const value = passwordInput.value.trim();
-  if (!value) return;
+let currentDoc = null;
+const editor = document.getElementById("editor");
+const status = document.getElementById("status");
 
-const { data, error } = await db
-  .from("vault_access")
-  .select("*");
+/* Formatting */
+function cmd(c) { document.execCommand(c); }
+function setFont(cls) { editor.className = "editor " + cls; }
 
-console.log("ROWS:", data);
-console.log("ERROR:", error);
+/* Load docs */
+async function loadDocs() {
+  const { data } = await supabase
+    .from("documents")
+    .select("*")
+    .order("created_at", { ascending: false });
 
-  if (!data || data.length === 0) {
-    errorBox.style.display = "block";
-  } else {
-    loginPanel.style.display = "none";
-    vault.style.display = "block";
-  }
+  const list = document.getElementById("docs");
+  list.innerHTML = "";
+
+  data.forEach(doc => {
+    const div = document.createElement("div");
+    div.className = "doc";
+    div.textContent = doc.title || "Untitled";
+    div.onclick = () => openDoc(doc);
+    list.appendChild(div);
+  });
 }
 
-unlockBtn.addEventListener("click", attemptUnlock);
-passwordInput.addEventListener("keydown", e => {
-  if (e.key === "Enter") attemptUnlock();
+/* Open doc */
+function openDoc(doc) {
+  currentDoc = doc;
+  editor.innerHTML = doc.content || "";
+}
+
+/* New doc */
+async function newDoc() {
+  const { data } = await supabase
+    .from("documents")
+    .insert({ title: "New Document", content: "" })
+    .select()
+    .single();
+
+  loadDocs();
+  openDoc(data);
+}
+
+/* Autosave */
+let timeout;
+editor.addEventListener("input", () => {
+  status.textContent = "Saving…";
+  clearTimeout(timeout);
+  timeout = setTimeout(saveDoc, 600);
 });
+
+async function saveDoc() {
+  if (!currentDoc) return;
+  await supabase
+    .from("documents")
+    .update({
+      content: editor.innerHTML,
+      updated_at: new Date()
+    })
+    .eq("id", currentDoc.id);
+
+  status.textContent = "Saved";
+}
+
+/* Init */
+loadDocs();
 </script>
 
 </body>
