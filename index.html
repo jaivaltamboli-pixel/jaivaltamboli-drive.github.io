@@ -2,20 +2,18 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Private Research Vault</title>
+<title>Research Vault</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<!-- Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
-
-/* =========================
-   RESET + BASE (1–80)
-========================= */
-
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Inter", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 html, body {
@@ -23,10 +21,6 @@ html, body {
   background: #0b0b0c;
   color: #e6e6e6;
 }
-
-/* =========================
-   LAYOUT (81–180)
-========================= */
 
 body {
   display: flex;
@@ -53,30 +47,20 @@ body {
     0 30px 60px rgba(0,0,0,0.7);
 }
 
-/* =========================
-   TEXT STYLING (181–260)
-========================= */
-
 h1 {
   font-size: 1.9rem;
   font-weight: 700;
   margin-bottom: 10px;
   color: #ffcc00;
-  letter-spacing: 0.5px;
 }
 
 p {
   font-size: 0.95rem;
   color: #b5b5b5;
   margin-bottom: 25px;
-  line-height: 1.6;
 }
 
-/* =========================
-   INPUTS (261–360)
-========================= */
-
-input[type="password"] {
+input {
   width: 100%;
   padding: 14px 16px;
   background: #0a0a0b;
@@ -85,21 +69,12 @@ input[type="password"] {
   color: #fff;
   font-size: 1rem;
   outline: none;
-  transition: all 0.2s ease;
-}
-
-input::placeholder {
-  color: #666;
 }
 
 input:focus {
   border-color: #ffcc00;
   box-shadow: 0 0 0 3px rgba(255,204,0,0.15);
 }
-
-/* =========================
-   BUTTON (361–440)
-========================= */
 
 button {
   margin-top: 20px;
@@ -112,21 +87,7 @@ button {
   font-weight: 700;
   font-size: 1rem;
   cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
-
-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 30px rgba(255,204,0,0.35);
-}
-
-button:active {
-  transform: translateY(0);
-}
-
-/* =========================
-   ERROR MESSAGE (441–500)
-========================= */
 
 #error {
   margin-top: 15px;
@@ -135,33 +96,22 @@ button:active {
   display: none;
 }
 
-/* =========================
-   EMBED VIEW (501–600+)
-========================= */
-
-#viewer {
+#vault {
   display: none;
   width: 100%;
   height: 100%;
+  padding: 60px;
 }
-
-iframe {
-  width: 100%;
-  height: 100%;
-  border: none;
-  background: #111;
-}
-
 </style>
 </head>
 
 <body>
 <div id="app">
 
-  <!-- LOGIN PANEL -->
+  <!-- LOGIN -->
   <div class="panel" id="login">
     <h1>Research Vault</h1>
-    <p>Authorized access only. Enter password to continue.</p>
+    <p>Authorized access only.</p>
 
     <input id="password" type="password" placeholder="Enter password">
     <button id="unlock">Unlock</button>
@@ -169,40 +119,50 @@ iframe {
     <div id="error">Incorrect password</div>
   </div>
 
-  <!-- CONTENT VIEW -->
-  <div id="viewer">
-    <iframe
-      src="https://cryptpad.fr/pad/#/2/pad/edit/NIPnhkWuRe9wwjSxdM71DUIg/p/"
-      allowfullscreen>
-    </iframe>
+  <!-- VAULT -->
+  <div id="vault">
+    <h1 style="color:#ffcc00;">Vault Unlocked</h1>
+    <p>Private content loaded securely from Supabase.</p>
   </div>
 
 </div>
 
 <script>
 /* =========================
-   SAFE JS (NO ERRORS)
+   SUPABASE SETUP
 ========================= */
+const supabase = window.supabase.createClient(
+  "https://sheeqpvmdrksdrxwxdfs.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNoZWVxcHZtZHJrc2RyeHd4ZGZzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE3NzMyMjEsImV4cCI6MjA4NzM0OTIyMX0.SEub1Atcb68cRwbm5lAB8Iv4cs1fFyJ5moVz8pAXmVk"
+);
 
-window.addEventListener("DOMContentLoaded", () => {
-  const btn = document.getElementById("unlock");
-  const input = document.getElementById("password");
-  const error = document.getElementById("error");
-  const login = document.getElementById("login");
-  const viewer = document.getElementById("viewer");
+/* =========================
+   LOGIN LOGIC
+========================= */
+const btn = document.getElementById("unlock");
+const input = document.getElementById("password");
+const error = document.getElementById("error");
+const login = document.getElementById("login");
+const vault = document.getElementById("vault");
 
-  const PASSWORD = "yourpasswordhere"; // CHANGE THIS
+btn.addEventListener("click", async () => {
+  error.style.display = "none";
 
-  btn.addEventListener("click", () => {
-    const value = input.value || "";
+  const value = input.value.trim();
+  if (!value) return;
 
-    if (value === PASSWORD) {
-      login.style.display = "none";
-      viewer.style.display = "block";
-    } else {
-      error.style.display = "block";
-    }
-  });
+  const { data } = await supabase
+    .from("vault_access")
+    .select("id")
+    .eq("password", value)
+    .limit(1);
+
+  if (!data || data.length === 0) {
+    error.style.display = "block";
+  } else {
+    login.style.display = "none";
+    vault.style.display = "block";
+  }
 });
 </script>
 
