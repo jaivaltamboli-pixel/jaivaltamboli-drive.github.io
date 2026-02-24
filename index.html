@@ -208,11 +208,12 @@ async function attemptUnlock() {
   const value = passwordInput.value.trim();
   if (!value) return;
 
-  const { data } = await db
-    .from("vault_access")
-    .select("id")
-    .eq("password", value)
-    .limit(1);
+const { data, error } = await db
+  .from("vault_access")
+  .select("*");
+
+console.log("ROWS:", data);
+console.log("ERROR:", error);
 
   if (!data || data.length === 0) {
     errorBox.style.display = "block";
